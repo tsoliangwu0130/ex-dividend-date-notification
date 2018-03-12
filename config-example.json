@@ -1,0 +1,16 @@
+{
+    "target_list": [
+        {
+            "symbol": "VT",
+            "fund_id": "3141"
+        },
+        {
+            "symbol": "BND",
+            "fund_id": "0928"
+        }
+    ],
+    "base_url": "https://personal.vanguard.com/us/JSP/Funds/VGITab/VGIFundDistributionTabContent.jsf?fundsdisableredirect=true&FundIntExt=INT&FundId=",
+    "email": "username@gmail.com",
+    "password": "password",
+    "recipients": ["recipient01@gmail.com", "recipient02@gmail.com"]
+}
