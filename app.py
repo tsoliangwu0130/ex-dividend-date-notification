@@ -8,7 +8,8 @@ from email.header import Header
 from email.mime.text import MIMEText
 
 
-def get_dividend(symbol, url):
+def get_dividend(url):
+    global config
     html_doc = requests.get(url)
     soup = BeautifulSoup(html_doc.text, 'html.parser')
 
@@ -38,10 +39,11 @@ def get_dividend(symbol, url):
             Distribution: {}
             Payable Date: {}
             """.format(record['distribution'], record['payable-date']))
-            send_email(symbol, message)
+            send_email(message)
 
 
-def send_email(symbol, message):
+def send_email(message):
+    global symbol, config
     # connect to SMTP server
     try:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
@@ -67,8 +69,10 @@ def send_email(symbol, message):
 
 
 if __name__ == '__main__':
+    global symbol, config
     config = json.load(open('config.json'))
     today = datetime.now().strftime('%m/%d/%Y')
 
     for target in config['target_list']:
-        get_dividend(target['symbol'], config['base_url'] + target['fund_id'])
+        symbol = target['symbol']
+        get_dividend(config['base_url'] + target['fund_id'])
