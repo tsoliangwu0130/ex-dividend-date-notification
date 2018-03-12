@@ -31,7 +31,7 @@ def fetch_ex_dividend_data(symbol, url):
 
     for record in ex_dividend_list:
         if record['ex-dividend-date'] == today:
-            print('Today is {} Ex-Dividend Date'.format(symbol))
+            print('-- Today is {} Ex-Dividend Date --'.format(symbol))
             print('Distribution: {}'.format(record['most-recent-distribution']))
             print('Payable Date: {}'.format(record['payable-date']))
 
