@@ -44,6 +44,7 @@ def get_dividend(url):
 
 def send_email(message):
     global symbol, config
+
     # connect to SMTP server
     try:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
@@ -61,6 +62,7 @@ def send_email(message):
     subject = 'Today is {} Ex-Dividend Date'.format(symbol)
     email_text['Subject'] = Header(subject, 'utf-8')
 
+    # send email
     try:
         server.sendmail(config['email'], config['recipients'], email_text.as_string())
         server.quit()
