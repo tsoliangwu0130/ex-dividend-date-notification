@@ -1,9 +1,10 @@
 import requests
+import textwrap
 from bs4 import BeautifulSoup
 from datetime import datetime
 
-today = datetime.now().strftime('%m/%d/%Y')
-
+# today = datetime.now().strftime('%m/%d/%Y')
+today = '05/01/2017'
 
 def fetch_ex_dividend_data(symbol, url):
     html_doc = requests.get(url)
@@ -13,7 +14,7 @@ def fetch_ex_dividend_data(symbol, url):
 
     table_field_list = [
         'distribution-type',
-        'most-recent-distribution',
+        'distribution',
         'record-date',
         'ex-dividend-date',
         'payable-date',
@@ -31,9 +32,13 @@ def fetch_ex_dividend_data(symbol, url):
 
     for record in ex_dividend_list:
         if record['ex-dividend-date'] == today:
-            print('-- Today is {} Ex-Dividend Date --'.format(symbol))
-            print('Distribution: {}'.format(record['most-recent-distribution']))
-            print('Payable Date: {}'.format(record['payable-date']))
+            message = '''
+                -- Today is {} Ex-Dividend Date --
+                Distribution: {}
+                Payable Date: {}
+            '''.format(symbol, record['distribution'], record['payable-date'])
+            print(textwrap.dedent(message))
+
 
 
 if __name__ == '__main__':
