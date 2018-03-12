@@ -1,12 +1,14 @@
+import json
 import requests
+import smtplib
 import textwrap
 from bs4 import BeautifulSoup
 from datetime import datetime
+from email.header import Header
+from email.mime.text import MIMEText
 
-# today = datetime.now().strftime('%m/%d/%Y')
-today = '05/01/2017'
 
-def fetch_ex_dividend_data(symbol, url):
+def get_dividend(symbol, url):
     html_doc = requests.get(url)
     soup = BeautifulSoup(html_doc.text, 'html.parser')
 
@@ -32,21 +34,41 @@ def fetch_ex_dividend_data(symbol, url):
 
     for record in ex_dividend_list:
         if record['ex-dividend-date'] == today:
-            message = '''
-                -- Today is {} Ex-Dividend Date --
-                Distribution: {}
-                Payable Date: {}
-            '''.format(symbol, record['distribution'], record['payable-date'])
-            print(textwrap.dedent(message))
+            message = textwrap.dedent("""\
+            Distribution: {}
+            Payable Date: {}
+            """.format(record['distribution'], record['payable-date']))
+            send_email(symbol, message)
 
+
+def send_email(symbol, message):
+    # connect to SMTP server
+    try:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.ehlo()
+        server.login(config['email'], config['password'])
+    except smtplib.SMTPAuthenticationError as e:
+        exit(e)
+    except smtplib.SMTPServerDisconnected as e:
+        exit(e)
+
+    # create email content
+    email_text = MIMEText(message, 'plain', 'utf-8')
+    email_text['From'] = Header(config['email'], 'utf-8')
+    email_text['To'] = Header(', '.join(config['recipients']), 'utf-8')
+    subject = 'Today is {} Ex-Dividend Date'.format(symbol)
+    email_text['Subject'] = Header(subject, 'utf-8')
+
+    try:
+        server.sendmail(config['email'], config['recipients'], email_text.as_string())
+        server.quit()
+    except smtplib.SMTPException as e:
+        exit(e)
 
 
 if __name__ == '__main__':
-    base_url = 'https://personal.vanguard.com/us/JSP/Funds/VGITab/VGIFundDistributionTabContent.jsf?fundsdisableredirect=true&FundIntExt=INT&FundId='
-    target_list = [
-        {'symbol': 'VT', 'fund_id': '3141'},
-        {'symbol': 'BND', 'fund_id': '0928'}
-    ]
+    config = json.load(open('config.json'))
+    today = datetime.now().strftime('%m/%d/%Y')
 
-    for target in target_list:
-        fetch_ex_dividend_data(target['symbol'], base_url + target['fund_id'])
+    for target in config['target_list']:
+        get_dividend(target['symbol'], config['base_url'] + target['fund_id'])
