@@ -1,6 +1,6 @@
 # Ex-Dividend Date Notification
 
-Simple script check if today is the Ex-Dividend date of any of your [Vanguard](https://investor.vanguard.com/home/) stocks and send notification over email.
+A Python 3 script to check if today is the Ex-Dividend date of any of your [Vanguard](https://investor.vanguard.com/home/) stocks and send notification over email.
 
 ## Configuration
 
