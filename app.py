@@ -9,13 +9,11 @@ from email.mime.text import MIMEText
 
 
 def get_dividend(url):
-    global config
     html_doc = requests.get(url)
     soup = BeautifulSoup(html_doc.text, 'html.parser')
-
     table = soup.find('table', {'id': 'divCapGainsTable'})
-    th_list = [
-        'distribution-type',
+    thead = [
+        'type',
         'distribution',
         'record-date',
         'ex-dividend-date',
@@ -29,7 +27,7 @@ def get_dividend(url):
     for tr in table.find_all('tr')[1:]:
         ex_dividend_dict = {}
         for index, td in enumerate(tr.find_all('td')):
-            ex_dividend_dict[th_list[index]] = td.text
+            ex_dividend_dict[thead[index]] = td.text
         ex_dividend_list.append(ex_dividend_dict)
 
     for record in ex_dividend_list:
@@ -44,33 +42,30 @@ def get_dividend(url):
 def send_email(message):
     global symbol, config
 
-    # connect to SMTP server
     try:
+        # connect to SMTP server
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
         server.login(config['email'], config['password'])
+
+        # create email content
+        email_text = MIMEText(message, 'plain', 'utf-8')
+        email_text['From'] = Header(config['email'], 'utf-8')
+        email_text['To'] = Header(', '.join(config['recipients']), 'utf-8')
+        email_text['Subject'] = Header('Today is {} Ex-Dividend Date'.format(symbol), 'utf-8')
+
+        # send email notification
+        server.sendmail(config['email'], config['recipients'], email_text.as_string())
+        server.quit()
     except smtplib.SMTPAuthenticationError as e:
         exit(e)
     except smtplib.SMTPServerDisconnected as e:
         exit(e)
-
-    # create email content
-    email_text = MIMEText(message, 'plain', 'utf-8')
-    email_text['From'] = Header(config['email'], 'utf-8')
-    email_text['To'] = Header(', '.join(config['recipients']), 'utf-8')
-    subject = 'Today is {} Ex-Dividend Date'.format(symbol)
-    email_text['Subject'] = Header(subject, 'utf-8')
-
-    # send email
-    try:
-        server.sendmail(config['email'], config['recipients'], email_text.as_string())
-        server.quit()
     except smtplib.SMTPException as e:
         exit(e)
 
 
 if __name__ == '__main__':
-    global symbol, config
     config = json.load(open('config.json'))
     today = datetime.now().strftime('%m/%d/%Y')
 
