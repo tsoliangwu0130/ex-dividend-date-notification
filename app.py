@@ -13,9 +13,8 @@ def get_dividend(url):
     html_doc = requests.get(url)
     soup = BeautifulSoup(html_doc.text, 'html.parser')
 
-    ex_dividend_table = soup.find('table', {'id': 'divCapGainsTable'})
-
-    table_field_list = [
+    table = soup.find('table', {'id': 'divCapGainsTable'})
+    th_list = [
         'distribution-type',
         'distribution',
         'record-date',
@@ -27,10 +26,10 @@ def get_dividend(url):
 
     ex_dividend_list = []
 
-    for tr in ex_dividend_table.find_all('tr')[1:]:
+    for tr in table.find_all('tr')[1:]:
         ex_dividend_dict = {}
         for index, td in enumerate(tr.find_all('td')):
-            ex_dividend_dict[table_field_list[index]] = td.text
+            ex_dividend_dict[th_list[index]] = td.text
         ex_dividend_list.append(ex_dividend_dict)
 
     for record in ex_dividend_list:
