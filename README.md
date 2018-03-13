@@ -4,7 +4,7 @@ Simple script check if today is the Ex-Dividend date of any of your [Vanguard](h
 
 ## Configuration
 
-Copy [config-example.json] as config.json, and modify as necessary.
+Copy [config-example.json](config-example.json) as config.json, and modify as necessary.
 
 ## Usage
 
