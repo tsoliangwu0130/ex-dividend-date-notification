@@ -13,7 +13,7 @@ def get_dividend(url):
     soup = BeautifulSoup(html_doc.text, 'html.parser')
     table = soup.find('table', {'id': 'divCapGainsTable'})
     thead = [
-        'type',
+        'distribution-type',
         'distribution',
         'record-date',
         'ex-dividend-date',
