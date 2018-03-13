@@ -72,8 +72,7 @@ def send_email(message):
 if __name__ == '__main__':
     global symbol, config
     config = json.load(open('config.json'))
-    # today = datetime.now().strftime('%m/%d/%Y')
-    today = '05/01/2017'
+    today = datetime.now().strftime('%m/%d/%Y')
 
     for target in config['target_list']:
         symbol = target['symbol']
