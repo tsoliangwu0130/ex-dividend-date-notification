@@ -34,10 +34,8 @@ def get_dividend(url):
         if record['ex-dividend-date'] == today:
             message = textwrap.dedent("""\
             <html>
-                <head>
-                    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-                </head>
-                <body style="font-family: 'Open Sans', sans-serif;">
+                <head></head>
+                <body style="font-family: 'arial', 'sans-serif';">
                     <h3>Today is {} Ex-Dividend Date</h3>
                     <ul>
                         <li>Distribution: {}</li>
