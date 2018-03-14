@@ -33,9 +33,19 @@ def get_dividend(url):
     for record in ex_dividend_list:
         if record['ex-dividend-date'] == today:
             message = textwrap.dedent("""\
-            Distribution: {}
-            Payable Date: {}
-            """.format(record['distribution'], record['payable-date']))
+            <html>
+                <head>
+                    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+                </head>
+                <body style="font-family: 'Open Sans', sans-serif;">
+                    <h3>Today is {} Ex-Dividend Date</h3>
+                    <ul>
+                        <li>Distribution: {}</li>
+                        <li>Payable Date: {}</li>
+                    </ul>
+                </body>
+            </html>
+            """.format(symbol, record['distribution'], record['payable-date']))
             send_email(message)
 
 
@@ -49,7 +59,7 @@ def send_email(message):
         server.login(config['email'], config['password'])
 
         # create email content
-        email_text = MIMEText(message, 'plain', 'utf-8')
+        email_text = MIMEText(message, 'html', 'utf-8')
         email_text['From'] = Header(config['email'], 'utf-8')
         email_text['To'] = Header(', '.join(config['recipients']), 'utf-8')
         email_text['Subject'] = Header('Today is {} Ex-Dividend Date'.format(symbol), 'utf-8')
