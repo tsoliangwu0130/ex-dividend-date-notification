@@ -33,17 +33,28 @@ def get_dividend(url):
     for record in ex_dividend_list:
         if record['ex-dividend-date'] == today:
             message = textwrap.dedent("""\
-            <html>
-                <head></head>
-                <body style="font-family: 'arial', 'sans-serif';">
-                    <h3>Today is {} Ex-Dividend Date</h3>
-                    <ul>
-                        <li>Distribution: {}</li>
-                        <li>Payable Date: {}</li>
-                    </ul>
-                </body>
-            </html>
-            """.format(symbol, record['distribution'], record['payable-date']))
+            <table border="0" style="font-family: Verdana">
+                <tr>
+                    <td>
+                        <h3>Today is {} Ex-Dividend Date</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <ul>
+                            <li>Type: {}</li>
+                            <li>Distribution: {}</li>
+                            <li>Payable Date: {}</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+            """.format(
+                symbol,
+                record['distribution-type'],
+                record['distribution'],
+                record['payable-date'])
+            )
             send_email(message)
 
 
